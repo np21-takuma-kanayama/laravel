@@ -36,6 +36,16 @@ class Handler extends ExceptionHandler
      */
     public function report(Exception $exception)
     {
+        try {
+            if (!$this->shouldntReport($exception)) {
+                logger('additional data', [
+                    'userId' => optional(auth()->user())->id,
+                    'url' => request()->url(),
+                    'input' => request()->all(),
+                ]);
+            }
+        } catch (Exception $e) {
+        }
         parent::report($exception);
     }
 

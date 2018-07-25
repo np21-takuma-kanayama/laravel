@@ -3,6 +3,8 @@
 namespace App\Providers;
 
 use Illuminate\Support\ServiceProvider;
+use Monolog\Handler\SlackWebhookHandler;
+use Monolog\Logger;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -13,7 +15,12 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot()
     {
-        //
+        if (config('services.log_slack_webhook') !== null) {
+            $monolog = \Log::getMonolog();
+            $slackHandler = new SlackWebhookHandler(config('services.log_slack_webhook'));
+            $slackHandler->setLevel(Logger::INFO);
+            $monolog->pushHandler($slackHandler);
+        }
     }
 
     /**
